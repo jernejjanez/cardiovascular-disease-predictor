@@ -55,49 +55,28 @@ params = {
 }
 
 
-def get_points_for_age_male(age):
+def get_points_for_age(age, gender):
     if age < 12775:
-        return -1
+        return -1 if gender == 0 else -9
     elif age in range(12775, 14600):
-        return 0
+        return 0 if gender == 0 else -4
     elif age in range(14600, 16425):
-        return 1
+        return 1 if gender == 0 else 0
     elif age in range(16425, 18250):
-        return 2
+        return 2 if gender == 0 else 3
     elif age in range(18250, 20075):
-        return 3
+        return 3 if gender == 0 else 6
     elif age in range(20075, 21900):
-        return 4
+        return 4 if gender == 0 else 7
     elif age in range(21900, 23725):
-        return 5
+        return 5 if gender == 0 else 8
     elif age in range(23725, 25550):
-        return 6
+        return 6 if gender == 0 else 8
     elif age >= 25550:
-        return 7
+        return 7 if gender == 0 else 8
 
 
-def get_points_for_age_female(age):
-    if age < 12775:
-        return -9
-    elif age in range(12775, 14600):
-        return -4
-    elif age in range(14600, 16425):
-        return 0
-    elif age in range(16425, 18250):
-        return 3
-    elif age in range(18250, 20075):
-        return 6
-    elif age in range(20075, 21900):
-        return 7
-    elif age in range(21900, 23725):
-        return 8
-    elif age in range(23725, 25550):
-        return 8
-    elif age >= 25550:
-        return 8
-
-
-def get_points_for_cholesterol_male(cholesterol):
+def get_points_for_cholesterol(cholesterol):
     # If cholesterol is normal
     if cholesterol == 1:
         return 0
@@ -109,72 +88,59 @@ def get_points_for_cholesterol_male(cholesterol):
         return 3
 
 
-def get_points_for_cholesterol_female(cholesterol):
-    # If cholesterol is normal
-    if cholesterol == 1:
-        return 0
-    # If cholesterol is above normal
-    elif cholesterol == 2:
-        return 1
-    # If cholesterol is well above normal
-    elif cholesterol == 3:
-        return 3
-
-
-def get_points_for_blood_pressure_male(ap_hi, ap_lo):
+def get_points_for_blood_pressure(ap_hi, ap_lo, gender):
     ap_hi_points = 0
-    if ap_hi < 120:
-        ap_hi_points = 0
-    elif ap_hi in range(120, 130):
-        ap_hi_points = 0
-    elif ap_hi in range(130, 140):
-        ap_hi_points = 1
-    elif ap_hi in range(140, 160):
-        ap_hi_points = 2
-    elif ap_hi >= 160:
-        ap_hi_points = 3
-
     ap_lo_points = 0
-    if ap_lo < 80:
-        ap_lo_points = 0
-    elif ap_lo in range(80, 85):
-        ap_lo_points = 0
-    elif ap_lo in range(85, 90):
-        ap_lo_points = 1
-    elif ap_lo in range(90, 100):
-        ap_lo_points = 2
-    elif ap_lo >= 100:
-        ap_lo_points = 3
+    # Male
+    if gender == 0:
+        if ap_hi < 120:
+            ap_hi_points = 0
+        elif ap_hi in range(120, 130):
+            ap_hi_points = 0
+        elif ap_hi in range(130, 140):
+            ap_hi_points = 1
+        elif ap_hi in range(140, 160):
+            ap_hi_points = 2
+        elif ap_hi >= 160:
+            ap_hi_points = 3
 
-    return max(ap_hi_points, ap_lo_points)
+        if ap_lo < 80:
+            ap_lo_points = 0
+        elif ap_lo in range(80, 85):
+            ap_lo_points = 0
+        elif ap_lo in range(85, 90):
+            ap_lo_points = 1
+        elif ap_lo in range(90, 100):
+            ap_lo_points = 2
+        elif ap_lo >= 100:
+            ap_lo_points = 3
 
+        return max(ap_hi_points, ap_lo_points)
+    # Female
+    elif gender == 1:
+        if ap_hi < 120:
+            ap_hi_points = -1
+        elif ap_hi in range(120, 130):
+            ap_hi_points = 0
+        elif ap_hi in range(130, 140):
+            ap_hi_points = 1
+        elif ap_hi in range(140, 160):
+            ap_hi_points = 2
+        elif ap_hi >= 160:
+            ap_hi_points = 3
 
-def get_points_for_blood_pressure_female(ap_hi, ap_lo):
-    ap_hi_points = 0
-    if ap_hi < 120:
-        ap_hi_points = -1
-    elif ap_hi in range(120, 130):
-        ap_hi_points = 0
-    elif ap_hi in range(130, 140):
-        ap_hi_points = 1
-    elif ap_hi in range(140, 160):
-        ap_hi_points = 2
-    elif ap_hi >= 160:
-        ap_hi_points = 3
+        if ap_lo < 80:
+            ap_lo_points = -1
+        elif ap_lo in range(80, 85):
+            ap_lo_points = 0
+        elif ap_lo in range(85, 90):
+            ap_lo_points = 1
+        elif ap_lo in range(90, 100):
+            ap_lo_points = 2
+        elif ap_lo >= 100:
+            ap_lo_points = 3
 
-    ap_lo_points = 0
-    if ap_lo < 80:
-        ap_lo_points = -1
-    elif ap_lo in range(80, 85):
-        ap_lo_points = 0
-    elif ap_lo in range(85, 90):
-        ap_lo_points = 1
-    elif ap_lo in range(90, 100):
-        ap_lo_points = 2
-    elif ap_lo >= 100:
-        ap_lo_points = 3
-
-    return max(ap_hi_points, ap_lo_points)
+        return max(ap_hi_points, ap_lo_points)
 
 
 def get_points_for_smoke(smoke):
@@ -215,62 +181,63 @@ def get_points_for_bmi(bmi):
         return 4
 
 
-def get_feedback_male(y_pred, points):
-    if y_pred:
-        if points < 0:
-            return 0
-        elif points in range(0, 2):
-            return 1
-        elif points in range(2, 4):
-            return 2
-        elif points in range(4, 7):
-            return 3
-        elif points in range(7, 9):
-            return 4
-        elif points >= 9:
-            return 5
-    else:
-        if points < 0:
-            return 5
-        elif points in range(0, 2):
-            return 4
-        elif points in range(2, 4):
-            return 3
-        elif points in range(4, 7):
-            return 2
-        elif points in range(7, 9):
-            return 1
-        elif points >= 9:
-            return 0
-
-
-def get_feedback_female(y_pred, points):
-    if y_pred:
-        if points < 0:
-            return 0
-        elif points in range(0, 3):
-            return 1
-        elif points in range(3, 5):
-            return 2
-        elif points in range(5, 8):
-            return 3
-        elif points in range(8, 11):
-            return 4
-        elif points >= 11:
-            return 5
-    else:
-        if points < 0:
-            return 5
-        elif points in range(0, 3):
-            return 4
-        elif points in range(3, 5):
-            return 3
-        elif points in range(5, 8):
-            return 2
-        elif points in range(8, 11):
-            return 1
-        elif points >= 11:
-            return 0
+def get_feedback(y_pred, points, gender):
+    # Male
+    if gender == 0:
+        if y_pred:
+            if points < 0:
+                return 0
+            elif points in range(0, 2):
+                return 1
+            elif points in range(2, 4):
+                return 2
+            elif points in range(4, 7):
+                return 3
+            elif points in range(7, 9):
+                return 4
+            elif points >= 9:
+                return 5
+        else:
+            if points < 0:
+                return 5
+            elif points in range(0, 2):
+                return 4
+            elif points in range(2, 4):
+                return 3
+            elif points in range(4, 7):
+                return 2
+            elif points in range(7, 9):
+                return 1
+            elif points >= 9:
+                return 0
+    # Female
+    elif gender == 1:
+        if y_pred:
+            if points < 0:
+                return 0
+            elif points in range(0, 3):
+                return 1
+            elif points in range(3, 5):
+                return 2
+            elif points in range(5, 8):
+                return 3
+            elif points in range(8, 11):
+                return 4
+            elif points >= 11:
+                return 5
+        else:
+            if points < 0:
+                return 5
+            elif points in range(0, 3):
+                return 4
+            elif points in range(3, 5):
+                return 3
+            elif points in range(5, 8):
+                return 2
+            elif points in range(8, 11):
+                return 1
+            elif points >= 11:
+                return 0
 
 
 if __name__ == '__main__':
@@ -285,18 +252,6 @@ if __name__ == '__main__':
         # metric = metrics.Accuracy() + metrics.Precision() + metrics.Recall() + metrics.F1() + metrics.LogLoss() + metrics.ROCAUC()
         metric = metrics.Accuracy() + metrics.Precision() + metrics.Recall() + metrics.F1()
 
-        # for x, y in X_y:
-        #     y_pred_proba = models[model].predict_proba_one(x)
-        #     if y_pred_proba[True] >= 0.1:
-        #         y_pred = 1
-        #     else:
-        #         y_pred = 0
-        #
-        #     models[model].fit_one(x, y)
-        #     metric.update(y, y_pred)
-        #
-        # print(metric)
-
         print(model_selection.progressive_val_score(X_y, models[model], metric, print_every=10000))
         # print(model_selection.progressive_val_score(X1_y1, models[model], metric))
 
@@ -306,197 +261,99 @@ if __name__ == '__main__':
 
         feedback_column = []
         prediction_column = []
-        points_column_male = []
-        points_column_female = []
+        score_column = []
         feedback = -1
         i = 1
         for x, y in X1_y1:
-            # y_pred_proba = models[model].predict_proba_one(x)
-            # if y_pred_proba[True] >= 0.2:
-            #     y_pred = 1
-            # else:
-            #     y_pred = 0
+            # Get prediction
             y_pred = models[model].predict_one(x)
             y = bool(y)
-            points = 0
-            # Male
-            if x["gender"] == 0:
-                points += get_points_for_age_male(x["age"])
-                points += get_points_for_cholesterol_male(x["cholesterol"])
-                points += get_points_for_blood_pressure_male(x["ap_hi"], x["ap_lo"])
-                points += get_points_for_bmi(x["bmi"])
-                points += get_points_for_smoke(x["smoke"])
-                # points += get_points_for_gluc(x["gluc"])
 
-                feedback = get_feedback_male(y_pred, points)
-                points_column_male.append(points)
+            # Calculate score from individual features
+            score = 0
+            score += get_points_for_age(x["age"], x["gender"])
+            score += get_points_for_cholesterol(x["cholesterol"])
+            score += get_points_for_blood_pressure(x["ap_hi"], x["ap_lo"], x["gender"])
+            score += get_points_for_bmi(x["bmi"])
+            score += get_points_for_smoke(x["smoke"])
+            # score += get_points_for_gluc(x["gluc"])
 
-            # Female
-            elif x["gender"] == 1:
-                points += get_points_for_age_female(x["age"])
-                points += get_points_for_cholesterol_female(x["cholesterol"])
-                points += get_points_for_blood_pressure_female(x["ap_hi"], x["ap_lo"])
-                points += get_points_for_bmi(x["bmi"])
-                points += get_points_for_smoke(x["smoke"])
-                # points += get_points_for_gluc(x["gluc"])
-
-                feedback = get_feedback_female(y_pred, points)
-                points_column_female.append(points)
-
+            # Get feedback based on prediction and calculated score
+            feedback = get_feedback(y_pred, score, x["gender"])
+            score_column.append(score)
             prediction_column.append(y_pred)
             feedback_column.append(feedback)
 
-            # feedback = 5
+            # feedback = 4 or 5
             if feedback >= 4:
                 models[model].fit_one(x, y_pred)
                 metric.update(y, y_pred)
             elif feedback == 3:
-                if x["gender"] == 0:
-                    if y_pred:
-                        if get_points_for_blood_pressure_male(x["ap_hi"], x["ap_lo"]) >= 1:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
-                        # elif get_points_for_cholesterol_male(x["cholesterol"]) >= 0:
-                        #     models[model].fit_one(x, y_pred)
-                        #     metric.update(y, y_pred)
-                        else:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
+                if y_pred:
+                    if get_points_for_blood_pressure(x["ap_hi"], x["ap_lo"], x["gender"]) >= 1:
+                        models[model].fit_one(x, y_pred)
+                        metric.update(y, y_pred)
+                    # elif get_points_for_cholesterol(x["cholesterol"]) >= 0:
+                    #     models[model].fit_one(x, y_pred)
+                    #     metric.update(y, y_pred)
                     else:
-                        if get_points_for_blood_pressure_male(x["ap_hi"], x["ap_lo"]) >= 1:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
-                        # elif get_points_for_cholesterol_male(x["cholesterol"]) >= 0:
-                        #     models[model].fit_one(x, not y_pred)
-                        #     metric.update(y, not y_pred)
-                        else:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
+                        models[model].fit_one(x, not y_pred)
+                        metric.update(y, not y_pred)
                 else:
-                    if y_pred:
-                        if get_points_for_blood_pressure_female(x["ap_hi"], x["ap_lo"]) >= 1:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
-                        # elif get_points_for_cholesterol_female(x["cholesterol"]) >= 0:
-                        #     models[model].fit_one(x, y_pred)
-                        #     metric.update(y, y_pred)
-                        else:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
+                    if get_points_for_blood_pressure(x["ap_hi"], x["ap_lo"], x["gender"]) >= 1:
+                        models[model].fit_one(x, not y_pred)
+                        metric.update(y, not y_pred)
+                    # elif get_points_for_cholesterol(x["cholesterol"]) >= 0:
+                    #     models[model].fit_one(x, not y_pred)
+                    #     metric.update(y, not y_pred)
                     else:
-                        if get_points_for_blood_pressure_female(x["ap_hi"], x["ap_lo"]) >= 1:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
-                        # elif get_points_for_cholesterol_female(x["cholesterol"]) >= 0:
-                        #     models[model].fit_one(x, not y_pred)
-                        #     metric.update(y, not y_pred)
-                        else:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
+                        models[model].fit_one(x, y_pred)
+                        metric.update(y, y_pred)
             elif feedback == 2:
-                if x["gender"] == 0:
-                    if y_pred:
-                        if get_points_for_blood_pressure_male(x["ap_hi"], x["ap_lo"]) >= 2:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
-                        # elif get_points_for_cholesterol_male(x["cholesterol"]) >= 1:
-                        #     models[model].fit_one(x, y_pred)
-                        #     metric.update(y, y_pred)
-                        else:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
+                if y_pred:
+                    if get_points_for_blood_pressure(x["ap_hi"], x["ap_lo"], x["gender"]) >= 2:
+                        models[model].fit_one(x, y_pred)
+                        metric.update(y, y_pred)
+                    # elif get_points_for_cholesterol(x["cholesterol"]) >= 1:
+                    #     models[model].fit_one(x, y_pred)
+                    #     metric.update(y, y_pred)
                     else:
-                        if get_points_for_blood_pressure_male(x["ap_hi"], x["ap_lo"]) >= 2:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
-                        # elif get_points_for_cholesterol_male(x["cholesterol"]) >= 1:
-                        #     models[model].fit_one(x, not y_pred)
-                        #     metric.update(y, not y_pred)
-                        else:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
+                        models[model].fit_one(x, not y_pred)
+                        metric.update(y, not y_pred)
                 else:
-                    if y_pred:
-                        if get_points_for_blood_pressure_female(x["ap_hi"], x["ap_lo"]) >= 2:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
-                        # elif get_points_for_cholesterol_female(x["cholesterol"]) >= 1:
-                        #     models[model].fit_one(x, y_pred)
-                        #     metric.update(y, y_pred)
-                        else:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
+                    if get_points_for_blood_pressure(x["ap_hi"], x["ap_lo"], x["gender"]) >= 2:
+                        models[model].fit_one(x, not y_pred)
+                        metric.update(y, not y_pred)
+                    # elif get_points_for_cholesterol(x["cholesterol"]) >= 1:
+                    #     models[model].fit_one(x, not y_pred)
+                    #     metric.update(y, not y_pred)
                     else:
-                        if get_points_for_blood_pressure_female(x["ap_hi"], x["ap_lo"]) >= 2:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
-                        # elif get_points_for_cholesterol_female(x["cholesterol"]) >= 1:
-                        #     models[model].fit_one(x, not y_pred)
-                        #     metric.update(y, not y_pred)
-                        else:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
+                        models[model].fit_one(x, y_pred)
+                        metric.update(y, y_pred)
             elif feedback == 1:
-                if x["gender"] == 0:
-                    if y_pred:
-                        if get_points_for_blood_pressure_male(x["ap_hi"], x["ap_lo"]) >= 3:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
-                        # elif get_points_for_cholesterol_male(x["cholesterol"]) >= 3:
-                        #     models[model].fit_one(x, y_pred)
-                        #     metric.update(y, y_pred)
-                        else:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
+                if y_pred:
+                    if get_points_for_blood_pressure(x["ap_hi"], x["ap_lo"], x["gender"]) >= 3:
+                        models[model].fit_one(x, y_pred)
+                        metric.update(y, y_pred)
+                    # elif get_points_for_cholesterol(x["cholesterol"]) >= 3:
+                    #     models[model].fit_one(x, y_pred)
+                    #     metric.update(y, y_pred)
                     else:
-                        if get_points_for_blood_pressure_male(x["ap_hi"], x["ap_lo"]) >= 3:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
-                        # elif get_points_for_cholesterol_male(x["cholesterol"]) >= 3:
-                        #     models[model].fit_one(x, not y_pred)
-                        #     metric.update(y, not y_pred)
-                        else:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
+                        models[model].fit_one(x, not y_pred)
+                        metric.update(y, not y_pred)
                 else:
-                    if y_pred:
-                        if get_points_for_blood_pressure_female(x["ap_hi"], x["ap_lo"]) >= 3:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
-                        # elif get_points_for_cholesterol_female(x["cholesterol"]) >= 3:
-                        #     models[model].fit_one(x, y_pred)
-                        #     metric.update(y, y_pred)
-                        else:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
+                    if get_points_for_blood_pressure(x["ap_hi"], x["ap_lo"], x["gender"]) >= 3:
+                        models[model].fit_one(x, not y_pred)
+                        metric.update(y, not y_pred)
+                    # elif get_points_for_cholesterol(x["cholesterol"]) >= 3:
+                    #     models[model].fit_one(x, not y_pred)
+                    #     metric.update(y, not y_pred)
                     else:
-                        if get_points_for_blood_pressure_female(x["ap_hi"], x["ap_lo"]) >= 3:
-                            models[model].fit_one(x, not y_pred)
-                            metric.update(y, not y_pred)
-                        # elif get_points_for_cholesterol_female(x["cholesterol"]) >= 3:
-                        #     models[model].fit_one(x, not y_pred)
-                        #     metric.update(y, not y_pred)
-                        else:
-                            models[model].fit_one(x, y_pred)
-                            metric.update(y, y_pred)
+                        models[model].fit_one(x, y_pred)
+                        metric.update(y, y_pred)
             else:
                 models[model].fit_one(x, not y_pred)
                 metric.update(y, not y_pred)
-            # elif feedback == 4 and x["age"] > 20075:
-            #     models[model].fit_one(x, y_pred)
-            #     metric.update(y, y_pred)
-            # elif feedback == 3 and x["age"] > 21900:
-            #     models[model].fit_one(x, y_pred)
-            #     metric.update(y, y_pred)
-            # elif feedback == 2 and x["age"] > 23725:
-            #     models[model].fit_one(x, y_pred)
-            #     metric.update(y, y_pred)
-            # elif feedback == 1 and x["age"] > 25550:
-            #     models[model].fit_one(x, y_pred)
-            #     metric.update(y, y_pred)
-            # else:
-            #     models[model].fit_one(x, not y_pred)
-            #     metric.update(y, not y_pred)
 
             if i % 10000 == 0:
                 print(metric)
