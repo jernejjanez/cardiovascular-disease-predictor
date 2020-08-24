@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Hi, dr. {{ current_user.username }}!</h1>
+    {% if form %}
+        {{ wtf.quick_form(form, form_type="horizontal",  horizontal_columns=('lg', 2, 10), id="form") }}
+        <br>
+    {% endif %}
+    {% for patient in patients %}
+        {% include '_patient.html' %}
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Previous page
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Next page <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    {% if show_feedback_modal %}
+        <!-- Positive/Negative feedback modal -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="feedbackModalTitle">Feedback</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Prediction:</h5>
+                        Patient
+                        <span class="result"></span>%
+                    </div>
+                    <div class="modal-footer">
+                        <span id="accuracyQuestion">Is the prediction accurate?</span>
+                        <button id="negativeFeedbackButton" type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        <button id="positiveFeedbackButton" type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Later</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

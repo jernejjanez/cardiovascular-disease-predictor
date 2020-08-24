@@ -50,6 +50,9 @@ class Doctor:
         evaluation_points += self.get_points_for_same_feedback(same_feedback_percentage)
         evaluation_points += self.get_points_for_similar_feedback(similar_feedback_percentage)
 
+        print("Rating:", doctor["rating"])
+        print("Reputation:", doctor["reputation"])
+        print("Activeness:", doctor["active"])
         evaluation_points += doctor["rating"]
         evaluation_points += doctor["reputation"]
         evaluation_points += doctor["active"]

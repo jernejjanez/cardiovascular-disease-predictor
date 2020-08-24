@@ -1,0 +1,103 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}
+        {{ title }} - Cardiovascular disease predictor
+    {% else %}
+        Welcome to Cardiovascular disease predictor
+    {% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Cardiovascular disease predictor</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('explore') }}">Explore</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_anonymous %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('user', username=current_user.username) }}">Profile</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    <script>
+        function diagnose(patientId, destElem) {
+            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/diagnose', {
+                patient_id: patientId
+            }).done(function(response) {
+                if (response['prediction'] === 1) {
+                    $(destElem).text("Yes");
+                } else {
+                    $(destElem).text("No");
+                }
+
+            }).fail(function() {
+                $(destElem).text("Error: Could not contact server.");
+            });
+        }
+
+        function feedback(patientId, feedbackValue, destElem) {
+            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/feedback', {
+                patient_id: patientId,
+                feedback_value: feedbackValue
+            }).done(function(response) {
+                $(destElem).text(response['feedback']);
+            }).fail(function() {
+                $(destElem).text("Error: Could not contact server.");
+            });
+        }
+
+        // $(function () {
+        //     $(document).on('submit', '#form', function () {
+        //         $.getJSON('/diagnose', function(response) {
+        //             debugger;
+        //             $(".result").html(response['prediction']);
+        //         }).fail(function() {
+        //             debugger;
+        //             $(".result").html("Error: Could not contact server.");
+        //         });
+        //         $("#feedbackModal").modal("show");
+        //     });
+        //
+        //
+        // });
+    </script>
+{% endblock %}

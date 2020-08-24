@@ -1,0 +1,90 @@
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('user', username=patient.doctor.username) }}">
+                <img src="{{ patient.doctor.avatar(70) }}">
+            </a>
+        </td>
+        <td>
+            Doctor:
+            <a href="{{ url_for('user', username=patient.doctor.username) }}">
+                {{ patient.doctor.username }}
+            </a>
+            <br>
+            <span id="patient{{ patient.id }}">
+                Patient <b>#{{ patient.id }}</b>
+                diagnosed on: {{ moment(patient.timestamp).format('LLL') }}
+                <br>
+                Age: <b>{{ patient.age }}</b>
+                <br>
+                Gender: <b>{% if patient.gender == 0 %}Male{% elif patient.gender == 1 %}Female{% else %}N/A{% endif %}</b>
+                <br>
+                Height: <b>{{ patient.height }}cm</b>
+                <br>
+                Weight: <b>{{ patient.weight }}kg</b>
+                <br>
+                Systolic blood pressure: <b>{{ patient.ap_hi }}</b>
+                <br>
+                Diastolic blood pressure: <b>{{ patient.ap_lo }}</b>
+                <br>
+                Cholesterol level: <b>{% if patient.cholesterol == 1 %}Normal{% elif patient.cholesterol == 2 %}Above normal{% elif patient.cholesterol == 3 %}Well above normal{% else %}N/A{% endif %}</b>
+                <br>
+                Glucose level: <b>{% if patient.gluc == 1 %}Normal{% elif patient.gluc == 2 %}Above normal{% elif patient.gluc == 3 %}Well above normal{% else %}N/A{% endif %}</b>
+                <br>
+                Smoker: <b>{% if patient.smoke == 0 %}No{% elif patient.smoke == 1 %}Yes{% else %}N/A{% endif %}</b>
+                <br>
+                Drinks alcohol: <b>{% if patient.alco == 0 %}No{% elif patient.alco == 1 %}Yes{% else %}N/A{% endif %}</b>
+                <br>
+                Physically active: <b>{% if patient.active == 0 %}No{% elif patient.active == 1 %}Yes{% else %}N/A{% endif %}</b>
+            </span>
+            <hr>
+            Patient has disease (prediction):
+            <span>
+                <b id="prediction{{ patient.id }}">
+                    {% if patient.prediction != None %}
+                        {% if patient.prediction == 1 %}
+                            Yes
+                        {% else %}
+                            No
+                        {% endif %}
+                    {% elif patient.prediction == None and patient.doctor != current_user %}
+                        No prediction yet
+                    {% endif %}
+<!--                    {% if patient.doctor == current_user %}-->
+<!--                        {% if patient.prediction != None %}-->
+<!--                            <a href="javascript:diagnose({{ patient.id }}, '#prediction{{ patient.id }}');">(Get prediction again)</a>-->
+<!--                        {% else %}-->
+<!--                            <a href="javascript:diagnose({{ patient.id }}, '#prediction{{ patient.id }}');">Get prediction</a>-->
+<!--                        {% endif %}-->
+<!--                    {% endif %}-->
+                </b>
+            </span>
+            <br>
+            Feedback (0 - very bad diagnosis, 5 - very good diagnosis):
+            <span>
+                <b id="feedback{{ patient.id }}">
+                    {% if patient.feedback != None %}
+                        <b>{{ patient.feedback }}</b>
+                    {% elif patient.feedback == None and patient.doctor != current_user %}
+                        <b>{{ patient.feedback }}</b>
+                    {% endif %}
+                    {% if patient.doctor == current_user %}
+                        {% if patient.feedback == None %}
+                            <a href="javascript:feedback({{ patient.id }}, 0, '#feedback{{ patient.id }}');">0</a>
+                            <span> / </span>
+                            <a href="javascript:feedback({{ patient.id }}, 1, '#feedback{{ patient.id }}');">1</a>
+                            <span> / </span>
+                            <a href="javascript:feedback({{ patient.id }}, 2, '#feedback{{ patient.id }}');">2</a>
+                            <span> / </span>
+                            <a href="javascript:feedback({{ patient.id }}, 3, '#feedback{{ patient.id }}');">3</a>
+                            <span> / </span>
+                            <a href="javascript:feedback({{ patient.id }}, 4, '#feedback{{ patient.id }}');">4</a>
+                            <span> / </span>
+                            <a href="javascript:feedback({{ patient.id }}, 5, '#feedback{{ patient.id }}');">5</a>
+                        {% endif %}
+                    {% endif %}
+                </b>
+            </span>
+        </td>
+    </tr>
+</table>

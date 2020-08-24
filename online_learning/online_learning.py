@@ -1,9 +1,8 @@
 from creme import stream, naive_bayes, neighbors, linear_model, metrics, compose, preprocessing, tree, model_selection, optim
 import pandas as pd
-import random
-import statistics
 import numpy as np
 from Doctor import Doctor
+import pickle
 
 models = {
     "Decision tree": tree.DecisionTreeClassifier(
@@ -321,7 +320,7 @@ if __name__ == '__main__':
         print("Doctor", doctor.id, "Feedback:", doctor.feedback)
         evaluation_data["doctor" + str(doctor.id)] = {"id": doctor.id, "rating": doctor.rating, "reputation": doctor.reputation, "active": doctor.active, "patients": {}, "good_doctor": False}
         # X_y = stream.iter_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned.csv', target='cardio', **params)
-        X_y = stream.iter_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned_initial.csv', target='cardio', **params)
+        X_y = stream.iter_csv('input/cardiovascular-disease-dataset/cardio_train_cleaned_initial.csv', target='cardio', **params)
         metric = metrics.Accuracy() + metrics.Precision() + metrics.Recall() + metrics.F1()
         models = {
             "Decision tree": tree.DecisionTreeClassifier(
@@ -359,15 +358,19 @@ if __name__ == '__main__':
         for model in models:
             print(model)
             # X_y = stream.iter_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned.csv', target='cardio', **params)
-            X_y = stream.iter_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned_initial.csv', target='cardio', **params)
-            X1_y1 = stream.iter_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned_feedback_patients.csv', target='cardio', **params)
+            X_y = stream.iter_csv('input/cardiovascular-disease-dataset/cardio_train_cleaned_initial.csv', target='cardio', **params)
+            X1_y1 = stream.iter_csv('input/cardiovascular-disease-dataset/cardio_train_cleaned_feedback_patients.csv', target='cardio', **params)
             metric = metrics.Accuracy() + metrics.Precision() + metrics.Recall() + metrics.F1()
 
             print(model_selection.progressive_val_score(X_y, models[model], metric, print_every=10000))
+            # save the model to disk
+            filename = 'initial_creme_model.sav'
+            pickle.dump(models[model], open(filename, 'wb'))
             # print(model_selection.progressive_val_score(X1_y1, models[model], metric))
 
             # df = pd.read_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned.csv', sep=",")
-            df = pd.read_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned_feedback_patients.csv', sep=",")
+            df = pd.read_csv(
+                'input/cardiovascular-disease-dataset/cardio_train_cleaned_feedback_patients.csv', sep=",")
             # df = pd.read_csv('./input/cardiovascular-disease-dataset/cardio_train_cleaned_initial.csv', sep=",")
 
             feedback_column = []
